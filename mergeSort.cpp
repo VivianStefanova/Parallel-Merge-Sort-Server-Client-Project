@@ -1,9 +1,17 @@
 #include"mergeSort.h"
 #include<vector>
 #include<thread>
+#include<mutex>
 #include<iostream>
 
 using namespace std;
+
+//Mutex for thread count synchronization
+mutex threadMutex;
+//Numer of active theads for parallel merge sort
+int activeThreads = 0;
+//Threshold for switching to single-threaded sort
+const int singleThreadThreshold = 800; 
 
 void printArray(const vector<int> &arr){
     int n = arr.size();
@@ -13,6 +21,7 @@ void printArray(const vector<int> &arr){
         cout<< arr[i] << " ";
     }
     cout<< arr[n-1] << "]"<< endl;
+    
 }
 
 //Set random values in the arrays- two identical arrays for sorting speed comparison
@@ -75,18 +84,64 @@ void merge(vector<int> &arr, int left, int mid, int right){
     
 }
 
+//Wrapper for merge sort implementation with number of thread from user input
+//maxThreads <= hardware_concurrency() and this is enforced on the server 
+void multiSort(vector<int> &arr, int maxThreads){
+    if(maxThreads == 1){
+        singleSort(arr);
+        return;
+    }
+    parallelMergeSort(arr, 0, arr.size() - 1, maxThreads);
+}
+
+void parallelMergeSort(std::vector<int>& arr, int left, int right, int maxThreads) {
+    if(left>=right) return;
+
+    // Threshold for switching to single-threaded sort
+    if(right - left < singleThreadThreshold) { 
+        mergeSort(arr, left, right);
+        return;
+    }
+
+    int mid= (left + right) / 2;
+
+     bool spawnThread = false;
+
+    {
+        std::lock_guard<std::mutex> lock(threadMutex);
+        if (activeThreads < maxThreads) {
+            activeThreads++;
+            spawnThread = true;
+        }
+    }
+    if (spawnThread) {
+        std::thread t([&]() {
+            parallelMergeSort(arr, left, mid, maxThreads);
+            activeThreads--;
+        });
+
+        parallelMergeSort(arr, mid + 1, right, maxThreads);
+        t.join();
+    } else {
+        parallelMergeSort(arr, left, mid, maxThreads);
+        parallelMergeSort(arr, mid + 1, right, maxThreads);
+    }
+
+    merge(arr, left, mid, right);
+}
+
 int sum(int a, int b) {
     return a + b;
 }
 
 //Test main function
 // int main(){
-//     int n= 5000;
+//     int n= 2000;
 //     vector<int> arr(n);
 //     vector<int> arr2(n);
 //     setRandomValues(arr, arr2, n);
 //     printArray(arr);
-//     singleSort(arr);
+//     multiSort(arr,4);
 //     printArray(arr);
 //     cout<<thread::hardware_concurrency()<<endl;
 //     return 0;
