@@ -2,6 +2,7 @@
 #include<vector>
 #include<thread>
 #include<mutex>
+#include <chrono>
 #include<iostream>
 
 using namespace std;
@@ -94,7 +95,7 @@ void multiSort(vector<int> &arr, int maxThreads){
     parallelMergeSort(arr, 0, arr.size() - 1, maxThreads);
 }
 
-void parallelMergeSort(std::vector<int>& arr, int left, int right, int maxThreads) {
+void parallelMergeSort( vector<int>& arr, int left, int right, int maxThreads) {
     if(left>=right) return;
 
     // Threshold for switching to single-threaded sort
@@ -108,14 +109,14 @@ void parallelMergeSort(std::vector<int>& arr, int left, int right, int maxThread
      bool spawnThread = false;
 
     {
-        std::lock_guard<std::mutex> lock(threadMutex);
+         lock_guard< mutex> lock(threadMutex);
         if (activeThreads < maxThreads) {
             activeThreads++;
             spawnThread = true;
         }
     }
     if (spawnThread) {
-        std::thread t([&]() {
+         thread t([&]() {
             parallelMergeSort(arr, left, mid, maxThreads);
             activeThreads--;
         });
@@ -136,13 +137,36 @@ int sum(int a, int b) {
 
 //Test main function
 // int main(){
-//     int n= 2000;
+//     //size of the array
+//     int n= 100000;
 //     vector<int> arr(n);
 //     vector<int> arr2(n);
 //     setRandomValues(arr, arr2, n);
-//     printArray(arr);
-//     multiSort(arr,4);
-//     printArray(arr);
-//     cout<<thread::hardware_concurrency()<<endl;
+
+//     // cout<<"Unsorted array: ";
+//     // printArray(arr);
+
+//     auto pStart2 =  chrono::high_resolution_clock::now();
+//     multiSort(arr2, 2);
+//     auto pEnd2 =  chrono::high_resolution_clock::now();
+//     chrono::duration<double> pDuration2 = pEnd2 - pStart2;
+//     cout << "Multi sort time (2 cores): " << pDuration2.count() << " seconds" <<  endl;
+
+//     auto pStart4 = chrono::high_resolution_clock::now();
+//     multiSort(arr2, 4);
+//     auto pEnd4 = chrono::high_resolution_clock::now();
+//     chrono::duration<double> pDuration4 = pEnd4 - pStart4;
+//     cout << "Multi sort time (4 cores): " << pDuration4.count() << " seconds" <<  endl;
+
+
+//     auto start =  chrono::high_resolution_clock::now();
+//     singleSort(arr);
+//     auto end =  chrono::high_resolution_clock::now();
+//     chrono::duration<double> duration = end - start;
+//     cout << "Single sort time: " << duration.count() << " seconds" <<  endl;
+
+//     // cout<<"Sorted array: ";
+//     // printArray(arr);
+   
 //     return 0;
 // }
