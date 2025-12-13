@@ -1,5 +1,6 @@
 #include"mergeSort.h"
 #include<vector>
+#include<thread>
 #include<iostream>
 
 using namespace std;
@@ -12,6 +13,19 @@ void printArray(const vector<int> &arr){
         cout<< arr[i] << " ";
     }
     cout<< arr[n-1] << "]"<< endl;
+}
+
+//Set random values in the arrays- two identical arrays for sorting speed comparison
+void setRandomValues(vector<int> &arr1, vector<int> &arr2, int size){
+    if((int)arr1.size() != size || (int)arr2.size() != size){
+        cerr<< "Error: Array sizes do not match the specified size." << endl;
+        return;
+    }
+    for (int i = 0; i < size; ++i) {
+        // Random numbers between 0 and 9999
+        arr1[i] = rand() % 10000; 
+        arr2[i] = arr1[i]; 
+    }
 }
 
 //Wrapper for merge sort implementation with 1 thread
@@ -67,10 +81,13 @@ int sum(int a, int b) {
 
 //Test main function
 // int main(){
-    
-//     vector<int> arr = {38, 27, 43, 10,11, 3, 5, 92, 75, 61,24,5,88,15,49,67,34,22,19,8};
+//     int n= 5000;
+//     vector<int> arr(n);
+//     vector<int> arr2(n);
+//     setRandomValues(arr, arr2, n);
 //     printArray(arr);
 //     singleSort(arr);
 //     printArray(arr);
+//     cout<<thread::hardware_concurrency()<<endl;
 //     return 0;
 // }
