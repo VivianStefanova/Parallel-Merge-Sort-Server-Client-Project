@@ -141,6 +141,19 @@ int main() {
     recv(sockfd, data.data(), size * sizeof(int), MSG_WAITALL);
     std::cout << "Sorted array received from server:\n";
     printArray(data);
+
+    //Recive time comparison 
+    if(threads >1){
+        uint64_t pdurationMs;
+        recv(sockfd, &pdurationMs, sizeof(pdurationMs), MSG_WAITALL);
+        double pdurationSec = pdurationMs / 1000.0;
+        std::cout << "Multi-threaded sort time:  " << pdurationSec << " seconds\n";
+    }
+    uint64_t durationMs;
+    recv(sockfd, &durationMs, sizeof(durationMs), MSG_WAITALL);
+    double durationSec = durationMs / 1000.0;
+    std::cout << "Single-threaded sort time: " << durationSec<< " seconds\n";
+    
     
     close(sockfd);
     return 0;

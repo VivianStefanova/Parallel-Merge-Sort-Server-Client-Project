@@ -1,5 +1,7 @@
 #include"mergeSort.h"
 #include<iostream>
+#include<vector>
+#include<chrono>
 
 
 #include <string.h>
@@ -115,12 +117,40 @@ int main() {
         std::cout << "Received array of size " << size << " with " << threads << " threads\n";   
         //printArray(data);
         //Sort data and send it back to client
-        if(threads == 1){
-            singleSort(data);
-        }else{
-            multiSort(data, threads);
+        std::vector<int> data2;
+        if(threads >1){
+            //vector for multi sort comparison
+            data2.resize(size);
+            for(int i=0; i<(int)size; i++){
+                data2[i]= data[i];
+            }
+            
+            auto pStart =  std::chrono::high_resolution_clock::now();
+            multiSort(data2, threads);
+            auto pEnd =  std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> pDuration = pEnd - pStart;
+            std::cout << "Multi sort time:  " << pDuration.count() << " seconds" <<  std::endl;
+            uint64_t pdurationMs = std::chrono::duration_cast<std::chrono::milliseconds>(pEnd - pStart).count();
+            sendAll(newClient, &pdurationMs, sizeof(pdurationMs));
         }    
-        sendAll(newClient, data.data(), size * sizeof(int));
+        auto start =  std::chrono::high_resolution_clock::now();
+        singleSort(data);
+        auto end =  std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> duration = end - start;
+        std::cout << "Single sort time: " << duration.count() << " seconds" <<  std::endl;
+        singleSort(data);
+        //sent time measurement for single sort
+        uint64_t durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        sendAll(newClient, &durationMs, sizeof(durationMs));
+
+        if(threads >1){
+            std::cout << "Sending sorted array (multi-threaded) back to client.\n";
+            sendAll(newClient, data2.data(), size * sizeof(int));
+        }
+        else{
+            std::cout << "Sending sorted array (single-threaded) back to client.\n";
+            sendAll(newClient, data.data(), size * sizeof(int));
+        }
         std::cout << "Sorted array sent back to client.\n";
 
         
