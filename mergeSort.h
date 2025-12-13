@@ -4,6 +4,7 @@
 #include <vector>
 
 void printArray(const std::vector<int> &arr);
+void setRandomValues(std::vector<int> &arr1, std::vector<int> &arr2, int n);
 
 void singleSort(std::vector<int> &arr);
 void mergeSort(std::vector<int> &arr, int left, int right);
