@@ -138,6 +138,9 @@ int main() {
     std::cout << "Data sent to server for sorting using " << threads << " threads.\n";
 
     //Receive sorted data
+    recv(sockfd, data.data(), size * sizeof(int), MSG_WAITALL);
+    std::cout << "Sorted array received from server:\n";
+    printArray(data);
     
     close(sockfd);
     return 0;

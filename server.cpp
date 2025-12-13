@@ -15,6 +15,17 @@
 
 #define PORT "4950"
 
+bool sendAll(int sock, const void* data, size_t len) {
+    const char* ptr = (const char*)data;
+    while (len > 0) {
+        ssize_t sent = send(sock, ptr, len, 0);
+        if (sent <= 0) return false;
+        ptr += sent;
+        len -= sent;
+    }
+    return true;
+}
+
 int main() {
 
     //char serverIP[INET_ADDRSTRLEN];
@@ -103,7 +114,15 @@ int main() {
 
         std::cout << "Received array of size " << size << " with " << threads << " threads\n";   
         //printArray(data);
-        
+        //Sort data and send it back to client
+        if(threads == 1){
+            singleSort(data);
+        }else{
+            multiSort(data, threads);
+        }    
+        sendAll(newClient, data.data(), size * sizeof(int));
+        std::cout << "Sorted array sent back to client.\n";
+
         
         close(newClient);                        
     }
