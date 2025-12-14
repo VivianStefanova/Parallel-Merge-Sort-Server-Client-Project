@@ -131,8 +131,13 @@ int main() {
             std::chrono::duration<double> pDuration = pEnd - pStart;
             std::cout << "Multi sort time:  " << pDuration.count() << " seconds" <<  std::endl;
             //sent time measurement for multi sort
-            double pdurationSec = pDuration.count();
-            sendAll(newClient, &pdurationSec, sizeof(pdurationSec));
+            // double pdurationSec = pDuration.count();
+            // sendAll(newClient, &pdurationSec, sizeof(pdurationSec));
+            uint64_t pduration_us =
+                std::chrono::duration_cast<std::chrono::microseconds>(pEnd - pStart).count();
+            // convert to network byte order (64-bit)
+            uint64_t pnet_duration = htobe64(pduration_us);
+            sendAll(newClient, &pnet_duration, sizeof(pnet_duration));
         }    
         auto start =  std::chrono::high_resolution_clock::now();
         singleSort(data);
@@ -141,8 +146,13 @@ int main() {
         std::cout << "Single sort time: " << duration.count() << " seconds" <<  std::endl;
         singleSort(data);
         //sent time measurement for single sort
-        double durationSec = duration.count();
-        sendAll(newClient, &durationSec, sizeof(durationSec));
+        // double durationSec = duration.count();
+        // sendAll(newClient, &durationSec, sizeof(durationSec));
+        uint64_t duration_us =
+                std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+        // convert to network byte order (64-bit)
+        uint64_t net_duration = htobe64(duration_us);
+        sendAll(newClient, &net_duration, sizeof(net_duration));
 
         if(threads >1){
             std::cout << "Sending sorted array (multi-threaded) back to client.\n";

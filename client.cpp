@@ -140,9 +140,16 @@ int main() {
     //Recive time comparison 
     double pdurationSec, durationSec;
     if(threads >1){
-        recv(sockfd, &pdurationSec, sizeof(pdurationSec), MSG_WAITALL);
+        uint64_t pdurationMs;
+        recv(sockfd, &pdurationMs, sizeof(pdurationMs), MSG_WAITALL);
+        pdurationMs = be64toh(pdurationMs);
+        pdurationSec = pdurationMs / 1e6;
+        
     }
-    recv(sockfd, &durationSec, sizeof(durationSec), MSG_WAITALL);
+    uint64_t durationMs;
+    recv(sockfd, &durationMs, sizeof(durationMs), MSG_WAITALL);
+    durationMs = be64toh(durationMs);
+    durationSec = durationMs / 1e6;
     
     //Receive sorted data
     recv(sockfd, data.data(), size * sizeof(int), MSG_WAITALL);
