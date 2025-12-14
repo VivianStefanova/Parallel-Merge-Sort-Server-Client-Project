@@ -103,9 +103,15 @@ int main() {
             std::cout << "Invalid input.\n";
         }
     } while (threads < 1 || threads > maxThreads);
-    //TO DO- validation for integer input
+
     std::cout << "Array size: ";
     std::cin >> size;
+
+    if(size<=1 || size > 1000000){
+        std::cerr << "Invalid choice\n";
+        close(sockfd);
+        return 1;
+    }
     std::vector<int> data(size);
 
     int choice;
