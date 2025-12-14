@@ -130,8 +130,9 @@ int main() {
             auto pEnd =  std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> pDuration = pEnd - pStart;
             std::cout << "Multi sort time:  " << pDuration.count() << " seconds" <<  std::endl;
-            uint64_t pdurationMs = std::chrono::duration_cast<std::chrono::milliseconds>(pEnd - pStart).count();
-            sendAll(newClient, &pdurationMs, sizeof(pdurationMs));
+            //sent time measurement for multi sort
+            double pdurationSec = pDuration.count();
+            sendAll(newClient, &pdurationSec, sizeof(pdurationSec));
         }    
         auto start =  std::chrono::high_resolution_clock::now();
         singleSort(data);
@@ -140,8 +141,8 @@ int main() {
         std::cout << "Single sort time: " << duration.count() << " seconds" <<  std::endl;
         singleSort(data);
         //sent time measurement for single sort
-        uint64_t durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-        sendAll(newClient, &durationMs, sizeof(durationMs));
+        double durationSec = duration.count();
+        sendAll(newClient, &durationSec, sizeof(durationSec));
 
         if(threads >1){
             std::cout << "Sending sorted array (multi-threaded) back to client.\n";
