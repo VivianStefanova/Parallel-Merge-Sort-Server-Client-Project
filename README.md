@@ -19,7 +19,7 @@ Implements the TCP server.
 - Measures execution time  
 - Sends timing results and sorted arrays back to the client  
 
-`client.cpp`
+`client.cpp` 
 Implements the TCP client.  
 - Connects to the server using TCP  
 - Accepts user input for:
