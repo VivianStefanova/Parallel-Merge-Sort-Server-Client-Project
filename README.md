@@ -10,7 +10,7 @@ The application is developed and run on **Linux (Ubuntu) using Windows Subsystem
 
 ## Files:
 
-`server.cpp`  
+`server.cpp`   
 Implements the TCP server.  
 - Accepts client connections  
 - Uses a **thread pool** to service multiple clients concurrently  
@@ -19,7 +19,7 @@ Implements the TCP server.
 - Measures execution time  
 - Sends timing results and sorted arrays back to the client  
 
-`client.cpp` 
+`client.cpp`   
 Implements the TCP client.  
 - Connects to the server using TCP  
 - Accepts user input for:
