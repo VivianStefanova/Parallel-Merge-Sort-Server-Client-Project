@@ -60,12 +60,12 @@ In a terminal running **Linux**:
     ```bash
     ./client.out
     ```
-    -Enter user data from the terminal and wait for a responce
+    -Enter user data from the terminal and wait for a response
 4. Start as many clients as you like, all on different terminals
     ```bash
     ./client.out
     ```
-5. Clen out files
+5. Clean files
     ```bash
     make clean
     ```
@@ -97,7 +97,7 @@ The project has been tested with:
 ## Steps for Creating the Project
 
 1. **Create Makefile:**
-   - Crate basic file structure
+   - Create basic file structure
    - Automate building `server.out` and `client.out`.
 
 2. **Implement MergeSort module:**
@@ -111,7 +111,7 @@ The project has been tested with:
    - Receive array size, array elements, and number of threads.
    - Perform sorting using `MergeSort` functions.
    - Send back sorted array
-   - Mesure execution times for sorting algorithms
+   - Measure execution times for sorting algorithms
 
 4. **Implement the client:**
    - Connect to the server using TCP.
